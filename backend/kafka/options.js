@@ -3,6 +3,6 @@ module.exports = {
   groupId: 'Z0wEuoPaR9mD_yUnGGm7Hw',
   sessionTimeout: 15000,
   protocol: ['roundrobin'],
-  fromOffset: 'latest', // default
+  fromOffset: 'none', // default
   commitOffsetsOnFirstJoin: true, // on the very first time this consumer group subscribes to a topic, record the offset returned in fromOffset (latest/earliest)
 };
