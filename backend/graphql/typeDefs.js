@@ -3,6 +3,7 @@ const { gql } = require("apollo-server-express");
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
   type Query {
+    latestBlocks(total: Int): [Block]
     getBlockByHash(hash: String!): Block
     getBlockByHeight(height: Int!): Block
     getTxByID(txid: String!): Tx

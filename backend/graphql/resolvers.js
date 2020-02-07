@@ -5,10 +5,12 @@ const vout = require('./mysql/accessors/vout')
 const wallet = require('./mysql/accessors/wallet')
 
 const LIMIT = 50;
+const TOTAL = 5;
 
 // Provide resolver functions for your schema fields
 const resolvers = {
   Query: {
+    latestBlocks: (_, {total}) => block.getLatest(total ? total : TOTAL),
     getBlockByHash: (_, { hash }) => block.getByHash(hash),
     getBlockByHeight: (_, { height }) => block.getByHeight(height),
     getTxByID: (_, { txid }) => tx_meta.getByID(txid),

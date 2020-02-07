@@ -1,22 +1,51 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Header, Grid, Table } from 'semantic-ui-react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { Header, Grid, Table, Dimmer, Loader } from 'semantic-ui-react';
 import { VictoryChart, VictoryLine, VictoryTheme } from 'victory'
 import Moment from 'react-moment';
+import { gql } from "apollo-boost";
+import { useQuery } from '@apollo/react-hooks';
 
 const BLOCKS_LIMIT = 20
 const MAX_ROW = 5
 
-export default function Charts() {
-  return (
+const LATEST_BLOCKS = gql`
+  {
+    latestBlocks {
+      hash
+      height
+      nTx
+      miner
+      time
+    }
+  }
+`
+
+export default function LiveCharts() {
+  const {loading, error, data} = useQuery(LATEST_BLOCKS)
+
+  if (loading) {
+    return (
+      <Dimmer active inverted>
+        <Loader inverted>Loading</Loader>
+      </Dimmer>
+    )
+  }
+
+  const initData = [...data.latestBlocks].reverse().map(b => {
+    b.timestamp = new Date()
+    return b
+  });
+  console.log(initData)
+  return (    
     <>
-      <Header as="h1">Charts</Header>
-      <LiveBlocks />
+      <Header as="h1">Live Charts</Header>
+      <LiveBlocks initData={initData} />
     </>
   )
 }
 
-function LiveBlocks() {
-  const [blocks, setBlocks] = useState([])
+function LiveBlocks({initData}) {
+  const [blocks, setBlocks] = useState(initData)
   const ws = useRef(null)
 
   useEffect(() => {
@@ -25,27 +54,30 @@ function LiveBlocks() {
       console.log(msg)
       setBlocks(prev => {
         const l = prev.length
-        if (l >= BLOCKS_LIMIT) {
-          return [...prev.slice(1, l), JSON.parse(msg.data)]
+        const dataObj = JSON.parse(msg.data)
+        const data = {
+          ...dataObj,
+          ...JSON.parse(dataObj.value)
         }
-        return [...prev, JSON.parse(msg.data)]
+        if (l >= BLOCKS_LIMIT) {
+          return [...prev.slice(1, l), data]
+        }
+        return [...prev, data]
       })
     }
-
-    return () => ws.close()
+    return () => ws.current.close()
   }, [])
 
   const rows = [...blocks].reverse().map((block, i) => {
-    const details = JSON.parse(block.value)
-    const l = details.hash.length
+    const l = block.hash.length
     const receivedDate = new Date(block.timestamp)
-    const blockDate = new Date(parseInt(details.time) * 1000)
+    const blockDate = new Date(parseInt(block.time) * 1000)
     return (
-      <Table.Row key={details.hash} positive={i === 0}>
-        <Table.Cell>{details.hash.substring(l - 10)}</Table.Cell>
-        <Table.Cell>{details.height}</Table.Cell>
-        <Table.Cell>{details.nTx}</Table.Cell>
-        <Table.Cell>{details.miner}</Table.Cell>
+      <Table.Row key={block.hash} positive={i === 0}>
+        <Table.Cell>...{block.hash.substring(l - 10)}</Table.Cell>
+        <Table.Cell>{block.height}</Table.Cell>
+        <Table.Cell>{block.nTx}</Table.Cell>
+        <Table.Cell>{block.miner}</Table.Cell>
         <Table.Cell>
           <Moment date={blockDate} format="MM/DD/YYYY hh:mm:ss A" />
         </Table.Cell>
@@ -57,8 +89,7 @@ function LiveBlocks() {
   })
 
   const plots = blocks.map(block => {
-    const details = JSON.parse(block.value)
-    return { x: parseInt(details.height), y: details.nTx }
+    return { x: parseInt(block.height), y: block.nTx }
   })
 
   return (
@@ -88,8 +119,8 @@ function LiveBlocks() {
       >
         <Table.Header>
           <Table.Row key="header_row">
-            <Table.HeaderCell width={3}>Hash (Last 10 chars)</Table.HeaderCell>
-            <Table.HeaderCell width={1}>Height</Table.HeaderCell>
+            <Table.HeaderCell width={2}>Hash</Table.HeaderCell>
+            <Table.HeaderCell width={2}>Height</Table.HeaderCell>
             <Table.HeaderCell width={1}>#Tx</Table.HeaderCell>
             <Table.HeaderCell width={5}>Miner</Table.HeaderCell>
             <Table.HeaderCell width={3}>Block Time</Table.HeaderCell>
@@ -101,7 +132,6 @@ function LiveBlocks() {
           {rows.slice(0, MAX_ROW)}
         </Table.Body>
       </Table>
-
     </>
   )
 }

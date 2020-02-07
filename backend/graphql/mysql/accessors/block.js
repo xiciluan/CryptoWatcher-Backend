@@ -15,4 +15,9 @@ module.exports = {
         if (rslt.length === 0) return null;
         return rslt[0]
     },
+    getLatest: async total => {
+        const rslt = await knex.select().from(TABLE).orderBy('height', 'desc')
+            .limit(total).timeout(10000, {cancel: true})
+        return rslt
+    }
 }

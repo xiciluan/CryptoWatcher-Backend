@@ -25,13 +25,23 @@ export default function TopBar() {
       </Menu.Item>
 
       <Menu.Item
-        name='charts'
-        active={page === 'charts'}
+        name='live-charts'
+        active={page === 'live-charts'}
         onClick={handleClick}
         as={Link}
-        to="/charts"
+        to="/live-charts"
       >
         Live Charts
+      </Menu.Item>
+
+      <Menu.Item
+        name='query-builder'
+        active={page === 'query-builder'}
+        onClick={handleClick}
+        as={Link}
+        to="/query-builder"
+      >
+        Query Builder
       </Menu.Item>
 
       <Menu.Item
