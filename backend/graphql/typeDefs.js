@@ -3,7 +3,13 @@ const { gql } = require("apollo-server-express");
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
   type Query {
-    hello: String
+    getBlockByHash(hash: String!): Block
+    getBlockByHeight(height: Int!): Block
+    getTxByID(txid: String!): Tx
+    getTxByBlockHash(hash: String!, offset: Int, limit: Int): [TxMeta]
+    getWalletIncome(addr: String!, offset: Int, limit: Int): [Income]
+    getVin(txid: String!, offset: Int, limit: Int): [Vin]
+    getVout(txid: String!, offset: Int, limit: Int): [Vout]
   }
 
   type Block {
@@ -13,6 +19,7 @@ const typeDefs = gql`
     nTx: Int!
     miner: String!
     rewards: Float!
+    transactions: [TxMeta]
   }
 
   type TxMeta {
@@ -20,6 +27,19 @@ const typeDefs = gql`
     blockhash: String!
     time: Int!
   }
+
+  type Income {
+    time: Int!
+    val: Float!
+  }
+ 
+  type Tx {
+    txid: String!
+    blockhash: String!
+    time: Int!
+    vin: [Vin]
+    vout: [Vout]
+  } 
 
   type Vin {
     vin_txid: String!

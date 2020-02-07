@@ -6,8 +6,11 @@
   "dependencies": {
     "apollo-server": "^2.9.16",
     "apollo-server-express": "^2.9.16",
+    "dotenv": "^8.2.0",
     "graphql": "^14.6.0",
     "kafka-node": "^5.0.0",
+    "knex": "^0.20.8",
+    "mysql": "^2.18.1",
     "ws": "^7.2.1"
   },
   "devDependencies": {},
