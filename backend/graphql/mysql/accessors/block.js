@@ -19,5 +19,10 @@ module.exports = {
         const rslt = await knex.select().from(TABLE).orderBy('height', 'desc')
             .limit(total).timeout(10000, {cancel: true})
         return rslt
+    },
+    getBetweenDate: async (from, to, offset, limit) => {
+        const rslt = await knex.select().from(TABLE).whereBetween('time', [from, to])
+            .offset(offset).limit(limit).timeout(10000, {cancel: true})
+        return rslt
     }
 }

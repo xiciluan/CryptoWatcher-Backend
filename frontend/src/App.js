@@ -5,17 +5,21 @@ import TopBar from "./components/TopBar"
 import Home from './components/Home'
 import LiveCharts  from './components/LiveCharts'
 import About from './components/About'
-import QueryBuilder from './components/QueryBuilder'
+import QueryBuilder from './components/QueryBuilder/QueryBuilder'
 import {
   BrowserRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
-import ApolloClient from 'apollo-boost';
+import ApolloClient, {InMemoryCache} from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 const client = new ApolloClient({
   uri: 'http://44.224.32.162:4000/graphql',
+  addTypename: false,
+  cache: new InMemoryCache({
+    addTypename: false
+  })
 });
 
 

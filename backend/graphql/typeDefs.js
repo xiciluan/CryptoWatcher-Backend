@@ -7,8 +7,9 @@ const typeDefs = gql`
     getBlockByHash(hash: String!): Block
     getBlockByHeight(height: Int!): Block
     getTxByID(txid: String!): Tx
-    getTxByBlockHash(hash: String!, offset: Int, limit: Int): [TxMeta]
-    getWalletIncome(addr: String!, offset: Int, limit: Int): [Income]
+    getBlocksBetweenDate(from: Int!, to: Int!, offset: Int, limit: Int): [Block]
+    getTxByBlockHash(hash: String!, offset: Int, limit: Int): [Tx]
+    getWalletIncome(addr: String!): [Income]
     getVin(txid: String!, offset: Int, limit: Int): [Vin]
     getVout(txid: String!, offset: Int, limit: Int): [Vout]
   }
@@ -20,13 +21,7 @@ const typeDefs = gql`
     nTx: Int!
     miner: String!
     rewards: Float!
-    transactions: [TxMeta]
-  }
-
-  type TxMeta {
-    txid: String!
-    blockhash: String!
-    time: Int!
+    transactions: [Tx]
   }
 
   type Income {
@@ -38,6 +33,8 @@ const typeDefs = gql`
     txid: String!
     blockhash: String!
     time: Int!
+    nVin: Int!
+    nVout: Int!
     vin: [Vin]
     vout: [Vout]
   } 

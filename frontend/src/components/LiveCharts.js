@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Header, Grid, Table, Dimmer, Loader } from 'semantic-ui-react';
 import { VictoryChart, VictoryLine, VictoryTheme } from 'victory'
 import Moment from 'react-moment';
@@ -21,7 +21,7 @@ const LATEST_BLOCKS = gql`
 `
 
 export default function LiveCharts() {
-  const {loading, error, data} = useQuery(LATEST_BLOCKS)
+  const {loading, data} = useQuery(LATEST_BLOCKS)
 
   if (loading) {
     return (
@@ -35,7 +35,7 @@ export default function LiveCharts() {
     b.timestamp = new Date()
     return b
   });
-  console.log(initData)
+
   return (    
     <>
       <Header as="h1">Live Charts</Header>
@@ -88,9 +88,7 @@ function LiveBlocks({initData}) {
     )
   })
 
-  const plots = blocks.map(block => {
-    return { x: parseInt(block.height), y: block.nTx }
-  })
+  const plots = blocks.map(block => ({ x: parseInt(block.height), y: block.nTx }))
 
   return (
     <>
