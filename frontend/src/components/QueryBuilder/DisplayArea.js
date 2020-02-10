@@ -5,7 +5,7 @@ import moment from 'moment'
 import Moment from 'react-moment';
 
 import {BLOCKS_BETWEEN_DATES, BLOCK_BY_HASH, BLOCK_BY_HEIGHT, TX_BY_HASH, INCOME} from '../../utils/queries'
-import { VictoryChart, VictoryLine, VictoryTheme } from 'victory'
+import { VictoryChart, VictoryLine, VictoryTheme, VictoryAxis } from 'victory'
 
 function ExpandableAccordin({type, title: root, data, onSubmit}) {
   const generateContent = (title, data, isOpen) => {
@@ -209,6 +209,8 @@ export default function DisplayArea({formData}) {
           width={1000}
           height={500}
         >
+          <VictoryAxis dependentAxis />
+          <VictoryAxis tickFormat={() => ''} />
           <VictoryLine
             data={plots}
             animate={{ duration: 500 }}

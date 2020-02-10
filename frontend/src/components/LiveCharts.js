@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Header, Grid, Table, Dimmer, Loader, Divider } from 'semantic-ui-react';
-import { VictoryChart, VictoryLine, VictoryTheme } from 'victory'
+import { VictoryChart, VictoryLine, VictoryTheme, VictoryAxis } from 'victory'
 import Moment from 'react-moment';
 import { gql } from "apollo-boost";
 import { useQuery } from '@apollo/react-hooks';
@@ -73,7 +73,7 @@ function DataDisplay({initData, initMonitorData}) {
   const times = useRef(monitoring.map(m => m.time))
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://44.224.32.162:4000")
+    ws.current = new WebSocket('ws://www.artofdata.me/ws/')
     ws.current.onmessage = msg => {
       const dataObj = JSON.parse(msg.data)      
       if (dataObj.source === 'block') {
@@ -163,6 +163,8 @@ function DataDisplay({initData, initMonitorData}) {
             width={1200}
             height={300}
           >
+            <VictoryAxis dependentAxis/>
+            <VictoryAxis tickFormat={() => ''} />
             <VictoryLine
               data={plots}
               animate={{ duration: 500 }}
@@ -204,6 +206,8 @@ function DataDisplay({initData, initMonitorData}) {
             width={1200}
             height={300}
           >
+            <VictoryAxis dependentAxis/>
+            <VictoryAxis tickFormat={() => ''} />
             <VictoryLine
               data={plots_monitor_1}
               animate={{ duration: 500 }}
