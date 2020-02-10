@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Segment, Grid } from 'semantic-ui-react'
 import Controller, { INIT_VALUES } from './Controller'
 import DisplayArea from './DisplayArea'

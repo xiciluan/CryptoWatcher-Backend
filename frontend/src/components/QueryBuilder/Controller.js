@@ -187,6 +187,7 @@ export default function Controller({handler}) {
       case 'block': return <BlockControllerFragment formik={formik} />
       // case 'transactions': return <TxControllerFragment formik={formik} />
       case 'wallet': return <WalletControllerFragment formik={formik} />
+      default: return null
     }
   }
 

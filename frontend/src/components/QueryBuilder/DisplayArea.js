@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useRef, useEffect } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useLazyQuery } from '@apollo/react-hooks';
 import { Accordion, Button, Dimmer, Loader, Table, Container } from 'semantic-ui-react'
 import moment from 'moment'
@@ -6,7 +6,6 @@ import Moment from 'react-moment';
 
 import {BLOCKS_BETWEEN_DATES, BLOCK_BY_HASH, BLOCK_BY_HEIGHT, TX_BY_HASH, INCOME} from '../../utils/queries'
 import { VictoryChart, VictoryLine, VictoryTheme } from 'victory'
-import {TD2} from '../../utils/test_data'
 
 function ExpandableAccordin({type, title: root, data, onSubmit}) {
   const generateContent = (title, data, isOpen) => {
@@ -59,7 +58,6 @@ function ExpandableAccordin({type, title: root, data, onSubmit}) {
 export default function DisplayArea({formData}) {
   const prevFormData = useRef(null)
   const displayData = useRef(null)
-  const blockLoadMoreClicks = useRef(0)
 
   const [
     getBlockByHash,
@@ -78,7 +76,7 @@ export default function DisplayArea({formData}) {
 
   const [
     getTxByBlockHash,
-    { loading: moreTxLoading, error: err3, data: moreTxData }
+    { error: err3, data: moreTxData }
   ] = useLazyQuery(TX_BY_HASH)
 
   const [
@@ -90,14 +88,13 @@ export default function DisplayArea({formData}) {
   const loadMoreClicked = useCallback(() => {
     if (formData.type === 'block') {
       // it has to be a block in displayData
-      console.log('clicked')
       getTxByBlockHash({variables: {
         hash: displayData.current.hash,
         offset: displayData.current.transactions.length,
         limit: 5
       }})
     }
-  }, [formData.type])
+  }, [formData.type, getTxByBlockHash])
 
   if (blockByHashLoading || blockByHeightLoading || blocksLoading || walletIncomeLoading) {
     return (
@@ -141,7 +138,6 @@ export default function DisplayArea({formData}) {
         displayData.current.transactions = newArr
       }
     } else if (formData.b_column === 'time') {
-      console.log('here')
       if (formData.b_from !== '' && formData !== prevFormData.current) {
         getBlocksBetweenDate({
           variables: {
@@ -172,7 +168,6 @@ export default function DisplayArea({formData}) {
   }
 
   if ((formData.type === 'block' && formData.b_column === 'time') || formData.type === 'wallet') {
-    console.log(displayData.current)
     let plots;
     let rows;
     if (formData.type === 'block') {

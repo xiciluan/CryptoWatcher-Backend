@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Header, Grid, Table, Dimmer, Loader } from 'semantic-ui-react';
+import { Header, Grid, Table, Dimmer, Loader, Divider } from 'semantic-ui-react';
 import { VictoryChart, VictoryLine, VictoryTheme } from 'victory'
 import Moment from 'react-moment';
 import { gql } from "apollo-boost";
@@ -70,12 +70,11 @@ function DataDisplay({initData, initMonitorData}) {
   const [blocks, setBlocks] = useState(initData)
   const [monitoring, setMonitoring] = useState(initMonitorData)
   const ws = useRef(null)
-  const lastReceivedMonitorTime = useRef(initMonitorData[0].time)
+  const times = useRef(monitoring.map(m => m.time))
 
   useEffect(() => {
     ws.current = new WebSocket("ws://44.224.32.162:4000")
     ws.current.onmessage = msg => {
-      console.log(msg)
       const dataObj = JSON.parse(msg.data)      
       if (dataObj.source === 'block') {
         setBlocks(prev => {
@@ -90,17 +89,20 @@ function DataDisplay({initData, initMonitorData}) {
           return [...prev, data]
         })
       } else if (dataObj.source === 'monitor_data') {
-        if (dataObj[0].time !== lastReceivedMonitorTime.current) {
-          lastReceivedMonitorTime.current = dataObj[0].time
+        if (times.current.indexOf(dataObj[0].time) < 0) {
           setMonitoring(prev => {
             const l = prev.length
             const data = {
               ...dataObj[0],
               timestamp: new Date()
             }
+            const orig = [...times.current]
             if (l >= MONITOR_LIMIT) {
+              
+              times.current = [...orig.slice(1, l), dataObj[0].time]
               return [...prev.slice(1, l), data]
             }
+            times.current = [...orig, dataObj[0].time]
             return [...prev, data]
           })
         }
@@ -191,6 +193,8 @@ function DataDisplay({initData, initMonitorData}) {
           {rows.slice(0, MAX_ROW)}
         </Table.Body>
       </Table>
+
+      <Divider />
 
       <Header as="h2">Monitoring</Header>
       <Grid>
