@@ -3,6 +3,7 @@ const block = require('./mysql/accessors/block')
 const vin = require('./mysql/accessors/vin')
 const vout = require('./mysql/accessors/vout')
 const wallet = require('./mysql/accessors/wallet')
+const monitor = require('./mysql/accessors/monitor')
 
 const LIMIT = 5;
 const TOTAL = 5;
@@ -29,6 +30,7 @@ const resolvers = {
     getVout: (_, {txid, offset, limit}) => (
       vout.getByTxID(txid, offset ? offset : 0, limit ? limit : LIMIT)
     ),
+    latestMonitorData: () => monitor.getMonitorData(),
   },
   Block: {
     transactions: root => tx_meta.getByBlockHash(root.hash, 0, LIMIT),

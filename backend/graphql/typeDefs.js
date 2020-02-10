@@ -12,6 +12,7 @@ const typeDefs = gql`
     getWalletIncome(addr: String!): [Income]
     getVin(txid: String!, offset: Int, limit: Int): [Vin]
     getVout(txid: String!, offset: Int, limit: Int): [Vout]
+    latestMonitorData: [Monitor]
   }
 
   type Block {
@@ -50,6 +51,12 @@ const typeDefs = gql`
     val: Float!
     addr: String!
     vout_n: Int!
+  }
+
+  type Monitor {
+    time: Int!
+    gini_index: Float!
+    max_hash_rate: Float!
   }
 `;
 
