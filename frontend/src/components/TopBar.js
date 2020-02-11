@@ -44,7 +44,7 @@ export default function TopBar() {
         Query Builder
       </Menu.Item>
 
-      <Menu.Item
+      {/* <Menu.Item
         name='about'
         active={page === 'about'}
         onClick={handleClick}
@@ -52,7 +52,7 @@ export default function TopBar() {
         to="/about"
       >
         About me
-      </Menu.Item>
+      </Menu.Item> */}
     </Menu>
   )
 }

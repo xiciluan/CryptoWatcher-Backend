@@ -4,7 +4,7 @@ import { Container } from 'semantic-ui-react'
 import TopBar from "./components/TopBar"
 import Home from './components/Home'
 import LiveCharts  from './components/LiveCharts'
-import About from './components/About'
+// import About from './components/About'
 import QueryBuilder from './components/QueryBuilder/QueryBuilder'
 import {
   BrowserRouter as Router,
@@ -31,9 +31,9 @@ function App() {
           <TopBar />
           <Container style={{ marginTop: '4em' }}>
             <Switch>
-              <Route path="/about">
+              {/* <Route path="/about">
                 <About />
-              </Route>
+              </Route> */}
               <Route path="/live-charts">
                 <LiveCharts />
               </Route>
