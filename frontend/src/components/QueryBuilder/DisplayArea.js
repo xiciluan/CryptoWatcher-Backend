@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { useLazyQuery } from '@apollo/react-hooks';
-import { Accordion, Button, Dimmer, Loader, Table, Container } from 'semantic-ui-react'
+import { Accordion, Button, Dimmer, Loader, Table, Container, Header, Icon } from 'semantic-ui-react'
 import moment from 'moment'
 import Moment from 'react-moment';
 
@@ -104,7 +104,9 @@ export default function DisplayArea({formData}) {
     )
   } else if (err0 || err1 || err2 || err3 || err4) {
     return (
-      "Error"
+      <Container text textAlign="center">
+        <Header as="h3">Error: Invalid Input <Icon name='ban' /></Header>
+      </Container>
     )
   }
 
@@ -164,7 +166,9 @@ export default function DisplayArea({formData}) {
   }
 
   if (!displayData.current) {
-    return null
+    return <Container text textAlign="center">
+      <Header as="h3">Nothing to show yet <Icon loading name='bug' /></Header>
+    </Container>
   }
 
   if ((formData.type === 'block' && formData.b_column === 'time') || formData.type === 'wallet') {
@@ -241,7 +245,6 @@ export default function DisplayArea({formData}) {
                   </>
                 )
               }
-              
             </Table.Row>
           </Table.Header>
 

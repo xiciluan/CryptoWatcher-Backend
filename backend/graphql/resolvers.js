@@ -11,7 +11,7 @@ const TOTAL = 5;
 // Provide resolver functions for your schema fields
 const resolvers = {
   Query: {
-    latestBlocks: (_, {total}) => block.getLatest(total ? total : TOTAL),
+    latestBlocks: (_, { total }) => block.getLatest(total ? total : TOTAL),
     getBlockByHash: (_, { hash }) => block.getByHash(hash),
     getBlockByHeight: (_, { height }) => block.getByHeight(height),
     getBlocksBetweenDate: (_, {from, to, offset, limit}) => (

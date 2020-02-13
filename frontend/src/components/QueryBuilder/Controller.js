@@ -195,7 +195,7 @@ export default function Controller({handler}) {
     <Form onSubmit={formik.handleSubmit}>
       <Form.Field>
         <label>Type</label>
-        <Form.Dropdown 
+        <Form.Dropdown
           fluid
           selection
           options={options}
