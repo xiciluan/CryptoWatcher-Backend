@@ -1,5 +1,4 @@
 import { Menu } from "semantic-ui-react";
-import { useState, useCallback } from "react";
 import {
   Link,
   useLocation
@@ -9,15 +8,13 @@ import React from 'react'
 
 export default function TopBar() {
   const location = useLocation()
-  const [page, setPage] = useState(location.pathname.substr(1) || 'home')
-  const handleClick = useCallback((e, { name }) => setPage(name), [])
+  const currLocation = location.pathname.substr(1) || 'home'
 
   return (
     <Menu fixed="top">
       <Menu.Item
         name='home'
-        active={page === 'home'}
-        onClick={handleClick}
+        active={currLocation === 'home'}
         as={Link}
         to="/"
       >
@@ -26,8 +23,7 @@ export default function TopBar() {
 
       <Menu.Item
         name='live-charts'
-        active={page === 'live-charts'}
-        onClick={handleClick}
+        active={currLocation === 'live-charts'}
         as={Link}
         to="/live-charts"
       >
@@ -36,8 +32,7 @@ export default function TopBar() {
 
       <Menu.Item
         name='query-builder'
-        active={page === 'query-builder'}
-        onClick={handleClick}
+        active={currLocation === 'query-builder'}
         as={Link}
         to="/query-builder"
       >

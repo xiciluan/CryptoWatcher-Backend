@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Header, Grid, Table, Dimmer, Loader, Divider } from 'semantic-ui-react';
+import { Button, Container, Header, Grid, Table, Dimmer, Loader, Divider, Icon } from 'semantic-ui-react';
 import { VictoryChart, VictoryLine, VictoryTheme, VictoryAxis } from 'victory'
 import Moment from 'react-moment';
 import { gql } from "apollo-boost";
 import { useQuery } from '@apollo/react-hooks';
+import {
+  Link,
+} from "react-router-dom";
+
 
 const BLOCKS_LIMIT = 20
 const MONITOR_LIMIT = 20
@@ -32,8 +36,20 @@ const LATEST_MONITORING = gql`
 `
 
 export default function LiveCharts() {
-  const {loading: blocksLoading, data: blocksData} = useQuery(LATEST_BLOCKS)
-  const {loading: monitorLoading, data: monitorData} = useQuery(LATEST_MONITORING)
+  const { loading: blocksLoading, error: err1, data: blocksData } = useQuery(LATEST_BLOCKS)
+  const { loading: monitorLoading, error: err2, data: monitorData } = useQuery(LATEST_MONITORING)
+
+  if (err1 || err2) {
+    return (
+      <Dimmer active inverted page>
+        <Container text textAlign="center">
+          <Header as="h2">GraphQL backend server is currently paused<Icon name='ban' /></Header>
+          <Header as="h2">Please come back later</Header>
+          <Button as={Link} to="/">Go to Home</Button>
+        </Container>
+      </Dimmer>
+    )
+  }
 
   if (blocksLoading || monitorLoading) {
     return (
@@ -49,7 +65,7 @@ export default function LiveCharts() {
       return b
     });
   }
-  
+
   let initMonitorData;
   if (monitorData) {
     initMonitorData = [...monitorData.latestMonitorData].reverse().map(m => {
@@ -57,8 +73,8 @@ export default function LiveCharts() {
       return m
     })
   }
-  
-  return (    
+
+  return (
     <>
       <Header as="h1">Live Charts</Header>
       <DataDisplay initData={initData} initMonitorData={initMonitorData} />
@@ -66,7 +82,7 @@ export default function LiveCharts() {
   )
 }
 
-function DataDisplay({initData, initMonitorData}) {
+function DataDisplay({ initData, initMonitorData }) {
   const [blocks, setBlocks] = useState(initData)
   const [monitoring, setMonitoring] = useState(initMonitorData)
   const ws = useRef(null)
@@ -74,8 +90,19 @@ function DataDisplay({initData, initMonitorData}) {
 
   useEffect(() => {
     ws.current = new WebSocket('ws://www.artofdata.me/ws/')
+    ws.current.onerror = e => {
+      return (
+        <Dimmer active inverted>
+          <Container text textAlign="center">
+            <Header as="h2">Websocket backend server is currently paused<Icon name='ban' /></Header>
+            <Header as="h2">Please come back later</Header>
+            <Button as={Link} to="/">Go to Home</Button>
+          </Container>
+        </Dimmer>
+      )
+    }
     ws.current.onmessage = msg => {
-      const dataObj = JSON.parse(msg.data)      
+      const dataObj = JSON.parse(msg.data)
       if (dataObj.source === 'block') {
         setBlocks(prev => {
           const l = prev.length
@@ -98,7 +125,7 @@ function DataDisplay({initData, initMonitorData}) {
             }
             const orig = [...times.current]
             if (l >= MONITOR_LIMIT) {
-              
+
               times.current = [...orig.slice(1, l), dataObj[0].time]
               return [...prev.slice(1, l), data]
             }
@@ -150,9 +177,9 @@ function DataDisplay({initData, initMonitorData}) {
   })
 
   const plots = blocks.map(block => ({ x: parseInt(block.height), y: block.nTx }))
-  const plots_monitor_1 = monitoring.map(m => ({x: m.time, y: m.gini_index}))
-  const plots_monitor_2 = monitoring.map(m => ({x: m.time, y: m.max_hash_rate}))
-  
+  const plots_monitor_1 = monitoring.map(m => ({ x: m.time, y: m.gini_index }))
+  const plots_monitor_2 = monitoring.map(m => ({ x: m.time, y: m.max_hash_rate }))
+
   return (
     <>
       <Header as="h2">Live Blocks</Header>
@@ -163,7 +190,7 @@ function DataDisplay({initData, initMonitorData}) {
             width={1200}
             height={300}
           >
-            <VictoryAxis dependentAxis/>
+            <VictoryAxis dependentAxis />
             <VictoryAxis tickFormat={() => ''} />
             <VictoryLine
               data={plots}
@@ -206,7 +233,7 @@ function DataDisplay({initData, initMonitorData}) {
             width={1200}
             height={300}
           >
-            <VictoryAxis dependentAxis/>
+            <VictoryAxis dependentAxis />
             <VictoryAxis tickFormat={() => ''} />
             <VictoryLine
               data={plots_monitor_1}
