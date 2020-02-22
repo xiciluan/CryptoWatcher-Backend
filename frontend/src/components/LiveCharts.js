@@ -89,7 +89,7 @@ function DataDisplay({ initData, initMonitorData }) {
   const times = useRef(monitoring.map(m => m.time))
 
   useEffect(() => {
-    ws.current = new WebSocket('ws://www.artofdata.me/ws/')
+    ws.current = new WebSocket('ws://api.artofdata.me/ws/')
     ws.current.onerror = e => {
       return (
         <Dimmer active inverted>

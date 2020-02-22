@@ -15,7 +15,7 @@ import ApolloClient, { InMemoryCache } from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 const client = new ApolloClient({
-  uri: 'http://www.artofdata.me/api/graphql',
+  uri: 'http://api.artofdata.me/graphql',
   addTypename: false,
   cache: new InMemoryCache({
     addTypename: false
